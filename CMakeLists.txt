@@ -8,6 +8,6 @@ add_executable(SAT n-sat.cpp)
 add_executable(FORCE bruteforce.cpp)
 add_executable(GENETIC genetic.cpp)
 
-add_subdirectory(minisat-master)
+add_subdirectory(minisat)
 
 target_link_libraries(SAT MiniSat::libminisat)
