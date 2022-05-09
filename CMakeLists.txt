@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(IVR)
 
 set(CMAKE_CXX_STANDARD 14)
-include_directories(minisat-master)
+include_directories(minisat)
 
 add_executable(SAT n-sat.cpp)
 add_executable(FORCE bruteforce.cpp)

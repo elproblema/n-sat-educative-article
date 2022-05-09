@@ -5,9 +5,9 @@ using namespace std;
 
 const int N = 9;
 const int N_sq = 3;
-const int fertility = 5;
-const int population = 500;
-const int generations = 500;
+const int fertility = 10;
+const int population = 1000;
+const int generations = 1000;
 
 int input[N][N];
 int start_table[N][N];
@@ -24,56 +24,62 @@ struct sudoku {
         }
     }
 
-    int f() const {
-        int res = 0;
-        for (int j = 0; j < N; ++j) {
-            for (int i1 = 0; i1 < N; ++i1) {
-                for (int i2 = i1 + 1; i2 < N; ++i2) {
-                    res += table[i1][j] == table[i2][j];
-                }
-            }
-        }
-        for (int sq = 0; sq < N; ++sq) {
-            int i_st = sq / N_sq * N_sq, j_st = sq % N_sq * N_sq;
-            for (int f = 0; f < N; ++f) {
-                for (int s = f + 1; s < N; ++s) {
-                    res += table[i_st + f / N_sq][j_st + f % N_sq] == table[i_st + s / N_sq][j_st + s % N_sq];
-                }
-            }
-        }
-        return res;
-    }
+    int f() const;
 
-    void random_fill() {
-        for (int i = 0; i < 9; ++i) {
-            vector<int> used(9);
-            for (int j = 0; j < 9; ++j) if (input[i][j]) used[table[i][j]] = 1;
-            vector<int> perm;
-            for (int j = 0; j < 9; ++j) if (!used[j]) perm.push_back(j);
-            random_shuffle(perm.begin(), perm.end());
-            int ptr = 0;
-            for (int j = 0; j < 9; ++j) {
-                if (!input[i][j]) table[i][j] = perm[ptr], ptr++;
-            }
-        }
-    }
+    void random_fill();
 
-    sudoku gen_new() {
-       sudoku new_sudoku;
-       for (int i = 0; i < N; ++i) {
-           for (int j = 0; j < N; ++j) {
-               new_sudoku.table[i][j] = table[i][j];
-           }
-       }
-       int i, j1, j2;
-       do {
-           i = rand() % N;
-           j1 = rand() % N, j2 = rand() % N;
-       } while (input[i][j1] || input[i][j2]);
-       swap(new_sudoku.table[i][j1], new_sudoku.table[i][j2]);
-       return new_sudoku;
-    }
+    sudoku gen_new();
 };
+
+int sudoku::f() const {
+    int res = 0;
+    for (int j = 0; j < N; ++j) {
+        for (int i1 = 0; i1 < N; ++i1) {
+            for (int i2 = i1 + 1; i2 < N; ++i2) {
+                res += table[i1][j] == table[i2][j];
+            }
+        }
+    }
+    for (int sq = 0; sq < N; ++sq) {
+        int i_st = sq / N_sq * N_sq, j_st = sq % N_sq * N_sq;
+        for (int f = 0; f < N; ++f) {
+            for (int s = f + 1; s < N; ++s) {
+                res += table[i_st + f / N_sq][j_st + f % N_sq] == table[i_st + s / N_sq][j_st + s % N_sq];
+            }
+        }
+    }
+    return res;
+}
+
+void sudoku::random_fill() {
+    for (int i = 0; i < 9; ++i) {
+        vector<int> used(9);
+        for (int j = 0; j < 9; ++j) if (input[i][j]) used[table[i][j]] = 1;
+        vector<int> perm;
+        for (int j = 0; j < 9; ++j) if (!used[j]) perm.push_back(j);
+        random_shuffle(perm.begin(), perm.end());
+        int ptr = 0;
+        for (int j = 0; j < 9; ++j) {
+            if (!input[i][j]) table[i][j] = perm[ptr], ptr++;
+        }
+    }
+}
+
+sudoku sudoku::gen_new() {
+    sudoku new_sudoku;
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            new_sudoku.table[i][j] = table[i][j];
+        }
+    }
+    int i, j1, j2;
+    do {
+        i = rand() % N;
+        j1 = rand() % N, j2 = rand() % N;
+    } while (input[i][j1] || input[i][j2]);
+    swap(new_sudoku.table[i][j1], new_sudoku.table[i][j2]);
+    return new_sudoku;
+}
 
 sudoku natural_selection() {
     vector<sudoku> parents(population);
